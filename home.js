@@ -30,14 +30,24 @@ const createPop = async () => {
     const array = await getPop();
     const results = array.slice(0, 5);
     results.forEach((aux) => {
-        const { title: titulo, image_url: imagem, mal_id: id, url: malUrl} = aux;
-        createElement('div', '', 'list', 'container', `div-${id}`);
-        createElement('p', `${titulo}`, `div-${id}`, 'titulo');
-        createImg('img', `${imagem}`, `div-${id}`, 'imagem', id);
+        const { title: titulo, image_url: imagem, mal_id: id, url: malUrl } = aux;
+        let a = " "
+        if (titulo.length > 25) {
+            a = titulo.substr(0, 25) + "...";
+        } else {
+            a = titulo;
+        }
+        createElement('div', '', 'list', 'container animate__animated animate__fadeIn', `div-${id}`);
+        createElement('button', `${a}`, `div-${id}`, 'titulo animate__animated animate__fadeIn', `better${id}`);
+        createImg('img', `${imagem}`, `div-${id}`, 'imagem animate__animated animate__fadeIn', id);
 
         /* Adicionando Link Externo na Imagem */
         const elementoImagem = document.getElementById(id);
         elementoImagem.addEventListener('click', () => {
+            window.location.href = malUrl;
+        });
+        const elementoBotao = document.getElementById(`better${id}`);
+        elementoBotao.addEventListener('click', () => {
             window.location.href = malUrl;
         });
     });
@@ -49,40 +59,49 @@ const createList = async (x) => {
     const array = await getAnime(x);
     const results = array.slice(0, 20);
     results.forEach((aux) => {
-        const { title: titulo, image_url: imagem, mal_id: id, url: malUrl  } = aux;
+        const { title: titulo, image_url: imagem, mal_id: id, url: malUrl } = aux;
+        let a = " "
+        if (titulo.length > 25) {
+            a = titulo.substr(0, 25) + "...";
+        } else {
+            a = titulo;
+        }
         createElement('div', '', 'list', 'container', `div-${id}`);
-        createElement('p', `${titulo}`, `div-${id}`, 'titulo');
-        createImg('img', `${imagem}`, `div-${id}`, 'imagem', id);
-        
+        createElement('button', `${a}`, `div-${id}`, 'titulo animate__animated animate__fadeIn', `better${id}`);
+        createImg('img', `${imagem}`, `div-${id}`, 'imagem animate__animated animate__fadeIn', id);
+
         /* Adicionando Link Externo na Imagem */
         const elementoImagem = document.getElementById(id);
         elementoImagem.addEventListener('click', () => {
             window.location.href = malUrl;
         });
-
+        const elementoBotao = document.getElementById(`better${id}`);
+        elementoBotao.addEventListener('click', () => {
+            window.location.href = malUrl;
+        });
         /* Check Favorito. */
         const checkStatus = localStorage.getItem(id);
 
         /* Encher Local Storage Vazio. */
-        if(localStorage.getItem("favItems") === null){
+        if (localStorage.getItem("favItems") === null) {
             localStorage.setItem('favItems', '0')
         }
 
-        /* Pegar Local Storage. */        
-        let currentStorageString = localStorage.getItem('favItems');        
+        /* Pegar Local Storage. */
+        let currentStorageString = localStorage.getItem('favItems');
         let currentStorage = currentStorageString.split(',');
 
         /* Criando Botão de Favoritar.*/
         const favButton = document.createElement('button');
         const buttonFather = document.getElementById(`div-${id}`);
-        favButton.innerHTML = 'Favoritar'
+        favButton.innerHTML = '🖤'
         favButton.id = `favButton-${id}`
         favButton.className = 'favButton unchecked'
         buttonFather.appendChild(favButton);
 
         /* Criando Botão de Desfavoritar. */
         const unFavButton = document.createElement('button');
-        unFavButton.innerHTML = 'Desfavoritar'
+        unFavButton.innerHTML = '❤'
         unFavButton.id = `unFavButton-${id}`
         unFavButton.className = 'favButton unchecked'
         buttonFather.appendChild(unFavButton);
@@ -101,9 +120,9 @@ const createList = async (x) => {
             unFavButton.style.display = 'inline-block'
 
             /* Remover o fill do Storage. */
-            currentStorage.forEach((i, j) => {                
-                if (i == '0'){
-                    currentStorage.splice(j , 1);             
+            currentStorage.forEach((i, j) => {
+                if (i == '0') {
+                    currentStorage.splice(j, 1);
                 }
             });
 
@@ -125,8 +144,8 @@ const createList = async (x) => {
 
             /* Remover um item favoritado. */
             currentStorage.forEach((i, j) => {
-                if (i == id){
-                    currentStorage.splice(j , 1);             
+                if (i == id) {
+                    currentStorage.splice(j, 1);
                 }
             });
 
@@ -161,13 +180,25 @@ const updaterStorage = (chave, valor) => {
 const searchButton = document.querySelector('.searchButton');
 searchButton.addEventListener('click', (event) => {
     event.preventDefault();
-    /* Limpando tela */
-    const animList = document.getElementById('list');
-    animList.innerHTML = '';
-    /* Buscando animes. */
+    const botaoPop = document.querySelector('.popButton')
     const searchInput = document.querySelector('.searchInput');
-    const input = searchInput.value;
-    createList(input);
+            const input = searchInput.value;
+    switch (input.length > 1) {
+        case false:
+            console.log("recarregou");
+            location.reload();
+            botaoPop.style.display = 'flex'
+        case true:
+            /* Limpando tela */
+            const animList = document.getElementById('list');
+            animList.innerHTML = '';
+            /* Buscando animes. */
+            botaoPop.style.display = 'none'
+            const searchInput = document.querySelector('.searchInput');
+            const input = searchInput.value;
+            createList(input);
+    }
+
 });
 
 /* Funções Auxiliares. */
@@ -189,7 +220,12 @@ const createImg = (element, src, father, className, idName) => {
     imagemPai.appendChild(imagem)
 }
 
-window.onload = () => {    
+/* Botão scroll pra cima */
+const botaoSubir = document.querySelector('.botaoSubir2')
+botaoSubir.addEventListener('click', () => {
+    window.scrollTo(0, 0);
+})
+window.onload = () => {
     createPop();
     getAnime();
 }

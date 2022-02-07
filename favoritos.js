@@ -40,11 +40,17 @@ const createItem = async (x) => {
     const element = await getAnime(x);
 
     const { title: titulo, image_url: imagem, mal_id: id } = element;
-
-    createElement('div', '', 'favoritos', 'container', `div-${id}`);
-    createElement('p', `${titulo}`, `div-${id}`, 'titulo');
-    createImg('img', `${imagem}`, `div-${id}`, 'imagem');
+    let a = " "
+    if (titulo.length > 25) {
+        a = titulo.substr(0, 25) + "...";
+    } else {
+        a = titulo;
+    }
+    createElement('div', '', 'favoritos', 'container animate__animated animate__fadeIn', `div-${id}`);
+    createElement('p', `${a}`, `div-${id}`, 'titulo animate__animated animate__fadeIn');
+    createImg('img', `${imagem}`, `div-${id}`, 'imagem animate__animated animate__fadeIn');
 }
+
 
 /* Funções Auxiliares. */
 const createElement = (element, inner, father, className, idName) => {
